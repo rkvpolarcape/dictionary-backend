@@ -24,6 +24,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.sql.DataSource;
@@ -38,72 +39,77 @@ import java.util.Map;
 @SpringBootApplication
 public class Main {
 
-  @Value("${spring.datasource.url}")
-  private String dbUrl;
+	@Value("${spring.datasource.url}")
+	private String dbUrl;
 
-  @Autowired
-  private DataSource dataSource;
+	@Autowired
+	private DataSource dataSource;
 
-  public static void main(String[] args) throws Exception {
-    SpringApplication.run(Main.class, args);
-  }
+	public static void main(String[] args) throws Exception {
+		SpringApplication.run(Main.class, args);
+	}
 
-  @RequestMapping("/")
-  String index() {
-    return "index";
-  }
+	@RequestMapping("/")
+	String index() {
+		return "index";
+	}
 
-  @RequestMapping("/db")
-  String db(Map<String, Object> model) {
-    try (Connection connection = dataSource.getConnection()) {
-      Statement stmt = connection.createStatement();
-      stmt.executeUpdate("CREATE TABLE IF NOT EXISTS ticks (tick timestamp)");
-      stmt.executeUpdate("INSERT INTO ticks VALUES (now())");
-      ResultSet rs = stmt.executeQuery("SELECT tick FROM ticks");
+	@RequestMapping("/db")
+	String db(Map<String, Object> model) {
+		try (Connection connection = dataSource.getConnection()) {
+			Statement stmt = connection.createStatement();
+			stmt.executeUpdate("CREATE TABLE IF NOT EXISTS ticks (tick timestamp)");
+			stmt.executeUpdate("INSERT INTO ticks VALUES (now())");
+			ResultSet rs = stmt.executeQuery("SELECT tick FROM ticks");
 
-      ArrayList<String> output = new ArrayList<String>();
-      while (rs.next()) {
-        output.add("Read from DB: " + rs.getTimestamp("tick"));
-      }
+			ArrayList<String> output = new ArrayList<String>();
+			while (rs.next()) {
+				output.add("Read from DB: " + rs.getTimestamp("tick"));
+			}
 
-      model.put("records", output);
-      return "db";
-    } catch (Exception e) {
-      model.put("message", e.getMessage());
-      return "error";
-    }
-  }
-  
-  @RequestMapping("/dictionary")
-  String dictionary(Map<String, Object> model) {
-    try (Connection connection = dataSource.getConnection()) {
-      Statement stmt = connection.createStatement();
-      stmt.executeUpdate("CREATE TABLE IF NOT EXISTS ticks (tick timestamp)");
-      stmt.executeUpdate("INSERT INTO ticks VALUES (now())");
-      ResultSet rs = stmt.executeQuery("SELECT tick FROM ticks");
+			model.put("records", output);
+			return "db";
+		} catch (Exception e) {
+			model.put("message", e.getMessage());
+			return "error";
+		}
+	}
 
-      ArrayList<String> output = new ArrayList<String>();
-      while (rs.next()) {
-        output.add("Read from DB: " + rs.getTimestamp("tick"));
-      }
+	@RequestMapping("/dictionary")
+	String dictionary(Map<String, Object> model) {
+		try (Connection connection = dataSource.getConnection()) {
+			Statement stmt = connection.createStatement();
+			stmt.executeUpdate("CREATE TABLE IF NOT EXISTS ticks (tick timestamp)");
+			stmt.executeUpdate("INSERT INTO ticks VALUES (now())");
+			ResultSet rs = stmt.executeQuery("SELECT tick FROM ticks");
 
-      model.put("records", output);
-      return "db";
-    } catch (Exception e) {
-      model.put("message", e.getMessage());
-      return "error";
-    }
-  }
+			ArrayList<String> output = new ArrayList<String>();
+			while (rs.next()) {
+				output.add("Read from DB: " + rs.getTimestamp("tick"));
+			}
 
-  @Bean
-  public DataSource dataSource() throws SQLException {
-    if (dbUrl == null || dbUrl.isEmpty()) {
-      return new HikariDataSource();
-    } else {
-      HikariConfig config = new HikariConfig();
-      config.setJdbcUrl(dbUrl);
-      return new HikariDataSource(config);
-    }
-  }
+			model.put("records", output);
+			return "db";
+		} catch (Exception e) {
+			model.put("message", e.getMessage());
+			return "error";
+		}
+	}
+
+	@RequestMapping("/define/{word}")
+	String define(@PathVariable String word) {
+		return word;
+	}
+
+	@Bean
+	public DataSource dataSource() throws SQLException {
+		if (dbUrl == null || dbUrl.isEmpty()) {
+			return new HikariDataSource();
+		} else {
+			HikariConfig config = new HikariConfig();
+			config.setJdbcUrl(dbUrl);
+			return new HikariDataSource(config);
+		}
+	}
 
 }
