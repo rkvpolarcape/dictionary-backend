@@ -1,15 +1,79 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/layout :: layout (~{::body},'db')}">
+<html xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{fragments/layout :: layout (~{::body},'db')}">
 
 <body>
 
 
-<div class="container">
-  <h1>Database Output</h1>
-  <ul th:each="record : ${records}">
-    <li th:text="${record}"/>
-  </ul>
-</div>
+	<div class="container">
+		<h1>Word Net</h1>
+		<ul th:each="record : ${records}">
+			<li th:text="${record}" />
+		</ul>
+
+
+		<div class="resizable">
+			<iframe id="wordNetFrame"
+				src="http://wordnetweb.princeton.edu/perl/webwn?s="
+				name="targetframe" allowTransparency="true" scrolling="yes"
+				frameborder="0"> </iframe>
+		</div>
+		<form>
+			<textarea id="wysihtml5-textarea" placeholder="Enter your text ..."
+				autofocus onselect="getSel()"></textarea>
+		</form>
+		<div id="wysihtml5-toolbar" style="display: none;">
+			<a data-wysihtml5-command="bold">bold</a> <a
+				data-wysihtml5-command="italic">italic</a>
+
+			<!-- Some wysihtml5 commands require extra parameters -->
+			<a data-wysihtml5-command="foreColor"
+				data-wysihtml5-command-value="red">red</a> <a
+				data-wysihtml5-command="foreColor"
+				data-wysihtml5-command-value="green">green</a> <a
+				data-wysihtml5-command="foreColor"
+				data-wysihtml5-command-value="blue">blue</a>
+
+			<!-- Some wysihtml5 commands like 'createLink' require extra paramaters specified by the user (eg. href) -->
+			<a data-wysihtml5-command="createLink">insert link</a>
+			<div data-wysihtml5-dialog="createLink" style="display: none;">
+				<label> Link: <input data-wysihtml5-dialog-field="href"
+					value="http://" class="text">
+				</label> <a data-wysihtml5-dialog-action="save">OK</a> <a
+					data-wysihtml5-dialog-action="cancel">Cancel</a>
+			</div>
+		</div>
+	</div>
+
+
+
+
+	<script type="text/javascript">
+		$(function() {
+			$(".resizable").resizable({
+				animate : true,
+				animateEasing : 'swing',
+				imateDuration : 500
+			});
+		});
+		function getSel() // javascript
+		{
+			// obtain the object reference for the <textarea>
+			var txtarea = document.getElementById("wysihtml5-textarea");
+			// obtain the index of the first selected character
+			var start = txtarea.selectionStart;
+			// obtain the index of the last selected character
+			var finish = txtarea.selectionEnd;
+			// obtain the selected text
+			var sel = txtarea.value.substring(start, finish);
+	
+			var frame = document.getElementById("wordNetFrame");
+			frame.src = 'http://wordnetweb.princeton.edu/perl/webwn?s=' + sel;
+	
+		// 			alert(sel);
+		// do something with the selected content
+		}
+	</script>
 
 </body>
 </html>
