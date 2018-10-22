@@ -16,12 +16,14 @@
 
 package com.example;
 
+import com.example.controller.TopFilter;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -47,6 +49,14 @@ public class Main {
 
 	public static void main(String[] args) throws Exception {
 		SpringApplication.run(Main.class, args);
+	}
+	
+	@Bean
+	public ServletRegistrationBean exampleServletBean() {
+	    ServletRegistrationBean bean = new ServletRegistrationBean(
+	      new TopFilter(), "/servlet/*");
+	    bean.setLoadOnStartup(1);
+	    return bean;
 	}
 
 	@RequestMapping("/")
@@ -75,6 +85,29 @@ public class Main {
 //		}
 		
 		return "db";
+	}
+	
+	@RequestMapping("/db2")
+	String db2(Map<String, Object> model) {
+//		try (Connection connection = dataSource.getConnection()) {
+//			Statement stmt = connection.createStatement();
+//			stmt.executeUpdate("CREATE TABLE IF NOT EXISTS ticks (tick timestamp)");
+//			stmt.executeUpdate("INSERT INTO ticks VALUES (now())");
+//			ResultSet rs = stmt.executeQuery("SELECT tick FROM ticks");
+//
+//			ArrayList<String> output = new ArrayList<String>();
+//			while (rs.next()) {
+//				output.add("Read from DB: " + rs.getTimestamp("tick"));
+//			}
+//
+//			model.put("records", output);
+//			return "db";
+//		} catch (Exception e) {
+//			model.put("message", e.getMessage());
+//			return "error";
+//		}
+		
+		return "db2";
 	}
 
 	@RequestMapping("/dictionary")
