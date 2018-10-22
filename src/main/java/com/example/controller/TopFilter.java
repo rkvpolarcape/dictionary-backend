@@ -11,9 +11,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet(name = "AnnotationExample", description = "Example Servlet Using Annotations", urlPatterns = {
-		"/serve" })
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+@WebServlet(name = "AnnotationExample", description = "Example Servlet Using Annotations", urlPatterns = { "/serve" })
 public class TopFilter extends HttpServlet {
+
+	Logger l = LoggerFactory.getLogger(TopFilter.class);
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -22,6 +26,8 @@ public class TopFilter extends HttpServlet {
 		response.setContentType("text/html");
 		PrintWriter out = response.getWriter();
 		out.println("<p>Hello World!</p>");
+		l.debug("test Request", request);
+		l.debug("test Response", response);
 	}
 
 	@Override
